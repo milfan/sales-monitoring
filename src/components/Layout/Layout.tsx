@@ -1,29 +1,37 @@
-// Layout.tsx
 import {
     Layout as AntLayout,
+    Avatar,
+    Dropdown,
     Menu,
     type MenuProps,
 } from "antd";
 import {
     MenuOutlined,
+    UserOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
-import { itemsMenu } from "../../routes";
+import { headerMenu, itemsMenu } from "../../routes";
 import { extractRoutes } from "../../utils/getRoutesFromMenu";
 
 const { Header, Sider, Content, Footer } = AntLayout;
 
 export default function Layout() {
     const [collapsed, setCollapsed] = useState(false);
-
     const navigate = useNavigate();
+
     const dynamicRoutes = extractRoutes(itemsMenu);
     const menuItemsForDisplay = itemsMenu.map(({ ...item }) => item);
 
     const handleClick: MenuProps['onClick'] = ({ key }) => {
         navigate(`/${key}`);
     };
+    const handleHeaderClick: MenuProps['onClick'] = ({ key }) => {
+        if (key == "logout") {
+            navigate(`/`);
+        }
+    };
+
     return (
         <AntLayout style={{ width: "100vw", minHeight: "100vh" }}>
             <Sider
@@ -31,6 +39,7 @@ export default function Layout() {
                 collapsed={collapsed}
                 trigger={null}
                 width={250}
+                theme="light"
                 style={{
                     height: "100vh",
                     position: "fixed",
@@ -65,7 +74,7 @@ export default function Layout() {
                     defaultSelectedKeys={['dashboard']}
                     defaultOpenKeys={['dashboard']}
                     mode="inline"
-                    theme="dark"
+                    theme="light"
                     inlineCollapsed={collapsed}
                     items={menuItemsForDisplay}
                     onClick={handleClick}
@@ -79,19 +88,42 @@ export default function Layout() {
                         padding: "0 24px",
                         display: "flex",
                         alignItems: "center",
+                        justifyContent: "space-between",
                         boxShadow: "0 1px 4px rgba(0,21,41,.08)",
                         position: "fixed",
-                        width: "100%",
+                        top: 0,
+                        left: collapsed ? 80 : 250,
+                        right: 0,
+                        height: 64,
                         zIndex: 999,
                     }}
                 >
-                    <div
-                        onClick={() => setCollapsed(!collapsed)}
-                        style={{ cursor: "pointer", marginRight: "20px" }}
-                    >
-                        {collapsed ? <MenuOutlined /> : <MenuOutlined />}
+                    {/* Left Side */}
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                        <div
+                            onClick={() => setCollapsed(!collapsed)}
+                            style={{ cursor: "pointer", marginRight: "20px" }}
+                        >
+                            <MenuOutlined />
+                        </div>
+                        <h2 style={{ margin: 0 }}>Dashboard Header</h2>
                     </div>
-                    <h2 style={{ margin: 0 }}>Dashboard Header</h2>
+
+                    {/* Right Side */}
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                        <Dropdown
+                            menu={{
+                                items: headerMenu,
+                                onClick: handleHeaderClick,
+                            }}
+                            trigger={['click']}
+                        >
+                            <Avatar
+                                style={{ backgroundColor: '#1677ff', cursor: 'pointer' }}
+                                icon={<UserOutlined />}
+                            />
+                        </Dropdown>
+                    </div>
                 </Header>
 
                 <AntLayout style={{ marginTop: "60px", padding: "20px" }}>

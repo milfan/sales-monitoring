@@ -34,3 +34,16 @@ export const publicRoutes = [
   },
 ];
 
+export const headerMenu: MenuProps['items'] = [
+  {
+    label: 'Manage Profile',
+    key: '1',
+  },
+  {
+    type: 'divider',
+  },
+  {
+    label: 'Logout',
+    key: 'logout',
+  },
+];
